@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#3hadt8)6a+v5dcs48g9_sjzkz%!xj$3-h1(mp(0-9egq-=#uv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -78,8 +78,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'student_db',  # Your MySQL database name
-        'USER': 'root',  # Your MySQL username
-        'PASSWORD': 'Ram@123',  # Your MySQL password
+        'USER': 'admin',  # Your MySQL username
+        'PASSWORD': 'Musharaf123',  # Your MySQL password
         'HOST': 'localhost',  # Or your DB server's address
         'PORT': '3306',
  }
