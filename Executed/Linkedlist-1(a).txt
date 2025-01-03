@@ -1,0 +1,80 @@
+import java.util.*;
+
+class LList {
+    public static void main(String args[]) {
+        int n, k, num, a, z = 0;
+        LinkedList<Integer> l = new LinkedList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        do {
+            System.out.println("Enter your Choice" + "\n1:insertion\n2:deletion\n3:display\n4:exit");
+            n = scanner.nextInt();
+
+            switch (n) {
+                case 1:
+                    System.out.println("Enter your Choice" + "\n1:insertion at first\n2:insertion at last\nother numbers:insertion after a number");
+                    k = scanner.nextInt();
+                    if (k == 1) {
+                        System.out.println("enter number");
+                        num = scanner.nextInt();
+                        l.addFirst(num);
+                    } else if (k == 2) {
+                        System.out.println("enter number");
+                        num = scanner.nextInt();
+                        l.addLast(num);
+                    } else {
+                        System.out.println("enter number after which you want to insert");
+                        a = scanner.nextInt();
+                        ListIterator<Integer> iter = l.listIterator();
+                        while (iter.hasNext()) {
+                            if (a == iter.next()) {
+                                System.out.println("enter number");
+                                num = scanner.nextInt();
+                                iter.add(num);
+                                z = 1;
+                            }
+                        }
+                        if (z == 0)
+                            System.out.println("number not in list");
+                        z = 0;
+                    }
+                    break;
+
+                case 2:
+                    System.out.println("Enter your Choice" + "\n1:DELETION at first\n2:DELETION at last\nOTHER DELETION at middle");
+                    k = scanner.nextInt();
+                    if (k == 1) {
+                        l.removeFirst();
+                    } else if (k == 2) {
+                        l.removeLast();
+                    } else {
+                        System.out.println("enter number after which you want to delete");
+                        a = scanner.nextInt();
+                        ListIterator<Integer> it = l.listIterator();
+                        while (it.hasNext()) {
+                            if (a == it.next()) {
+                                it.remove();
+                                z = 1;
+                            }
+                        }
+                        if (z == 0)
+                            System.out.println("number not in list");
+                        z = 0;
+                    }
+                    break;
+
+                case 3:
+                    System.out.println(l);
+                    break;
+
+                case 4:
+                    n = 0;
+                    break;
+            }
+        } while (n != 0);
+
+        // Close the scanner to avoid resource leaks
+        scanner.close();
+    }
+}
+
