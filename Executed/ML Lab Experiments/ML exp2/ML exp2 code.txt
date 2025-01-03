@@ -1,0 +1,139 @@
+1) 
+import pandas as pd
+
+# Example dataset
+data = {
+    'Attribute1': ['Yes', 'Yes', 'No', 'No'],
+    'Attribute2': ['No', 'No', 'No', 'Yes'],
+    'Class': ['Yes', 'Yes', 'No', 'No']
+}
+df = pd.DataFrame(data)
+
+def candidate_elimination(df):
+    num_attributes = len(df.columns) - 1
+    # Initialize General Hypothesis and Specific Hypothesis
+    G = {('?',)*num_attributes}
+    first_positive = df[df['Class'] == 'Yes'].iloc[0][:-1]
+    S = {tuple(first_positive)}
+    
+    for _, row in df.iterrows():
+        sample, target = tuple(row[:-1]), row[-1]
+        if target == 'Yes':
+            G = {g for g in G if is_consistent(g, sample)}
+            S = generalize_S(S, sample)
+        else:
+            S = {s for s in S if not is_consistent(s, sample)}
+            G = specialize_G(G, S, sample)
+    return G, S
+
+def is_consistent(hypothesis, sample):
+    return all(h == '?' or h == s for h, s in zip(hypothesis, sample))
+
+def generalize_S(S, sample):
+    S_next = set()
+    for s in S:
+        if is_consistent(s, sample):
+            S_next.add(s)
+        else:
+            S_next |= {tuple('?' if s != x else x for s, x in zip(s, sample))}
+    return S_next
+
+def specialize_G(G, S, sample):
+    G_next = set()
+    for g in G:
+        if not is_consistent(g, sample):
+            G_next.add(g)
+        else:
+            for i in range(len(g)):
+                if g[i] == '?':
+                    for value in {'Yes', 'No'}:
+                        if sample[i] != value:
+                            g_new = list(g)
+                            g_new[i] = value
+                            g_new = tuple(g_new)
+                            if any(is_more_general(s, g_new) for s in S):
+                                G_next.add(g_new)
+    return G_next
+
+def is_more_general(h1, h2):
+    more_general_parts = []
+    for x, y in zip(h1, h2):
+        mg = x == '?' or (x != '0' and (x == y or y == '0'))
+        more_general_parts.append(mg)
+    return all(more_general_parts)
+
+# Running the algorithm with the dataset
+G, S = candidate_elimination(df)
+print("General Hypotheses:\n", G)
+print("Specific Hypotheses:\n", S)
+
+
+
+2)
+import pandas as pd
+
+# Example dataset
+data = {
+    'Attribute1': ['Yes', 'Yes', 'No', 'No', 'Yes'],
+    'Attribute2': ['No', 'No', 'No', 'Yes', 'Yes'],
+    'Class': ['Yes', 'No', 'No', 'Yes', 'No']
+}
+df = pd.DataFrame(data)
+
+def candidate_elimination(df):
+    num_attributes = len(df.columns) - 1
+    # Initialize General Hypothesis and Specific Hypothesis
+    G = {('?',) * num_attributes}
+    first_positive = df[df['Class'] == 'Yes'].iloc[0][:-1]
+    S = {tuple(first_positive)}
+    
+    for _, row in df.iterrows():
+        sample, target = tuple(row[:-1]), row[-1]
+        if target == 'Yes':
+            G = {g for g in G if is_consistent(g, sample)}
+            S = generalize_S(S, sample)
+        else:
+            S = {s for s in S if not is_consistent(s, sample)}
+            G = specialize_G(G, S, sample)
+    return G, S
+
+def is_consistent(hypothesis, sample):
+    return all(h == '?' or h == s for h, s in zip(hypothesis, sample))
+
+def generalize_S(S, sample):
+    S_next = set()
+    for s in S:
+        if is_consistent(s, sample):
+            S_next.add(s)
+        else:
+            S_next |= {tuple('?' if s != x else x for s, x in zip(s, sample))}
+    return S_next
+
+def specialize_G(G, S, sample):
+    G_next = set()
+    for g in G:
+        if not is_consistent(g, sample):
+            G_next.add(g)
+        else:
+            for i in range(len(g)):
+                if g[i] == '?':
+                    for value in {'Yes', 'No'}:
+                        if sample[i] != value:
+                            g_new = list(g)
+                            g_new[i] = value
+                            g_new = tuple(g_new)
+                            if any(is_more_general(s, g_new) for s in S):
+                                G_next.add(g_new)
+    return G_next
+
+def is_more_general(h1, h2):
+    more_general_parts = []
+    for x, y in zip(h1, h2):
+        mg = x == '?' or (x != '0' and (x == y or y == '0'))
+        more_general_parts.append(mg)
+    return all(more_general_parts)
+
+# Running the algorithm with the dataset
+G, S = candidate_elimination(df)
+print("General Hypotheses:\n", G)
+print("Specific Hypotheses:\n", S)

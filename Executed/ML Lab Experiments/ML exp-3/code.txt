@@ -1,0 +1,72 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# Sample data
+data = {
+    'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rain', 'Rain', 'Rain', 'Overcast', 
+                'Sunny', 'Sunny', 'Rain', 'Sunny', 'Overcast', 'Overcast', 'Rain'],
+    'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Cool', 'Cool', 'Cool', 
+                    'Mild', 'Cool', 'Mild', 'Mild', 'Mild', 'Hot', 'Mild'],
+    'Humidity': ['High', 'High', 'High', 'High', 'Normal', 'Normal', 'Normal', 
+                 'High', 'Normal', 'Normal', 'Normal', 'High', 'Normal', 'High'],
+    'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 
+             'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Strong'],
+    'Play Tennis': ['No', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 
+                    'No', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'No']
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Convert categorical variables into dummy/indicator variables
+features = pd.get_dummies(df[['Outlook', 'Temperature', 'Humidity', 'Wind']])
+target = df['Play Tennis']
+
+# Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.3, random_state=1)
+
+# Create a Decision Tree Classifier (using the ID3 algorithm)
+clf = DecisionTreeClassifier(criterion='entropy')
+
+# Train the classifier
+clf.fit(X_train, y_train)
+
+# Predict the response for the test dataset
+y_pred = clf.predict(X_test)
+
+# Model Accuracy
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Displaying actual vs predicted values
+comparison_df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+print(comparison_df)
+
+# Function to format new sample data
+def format_new_sample(sample, feature_columns):
+    new_sample = pd.DataFrame([sample])
+    new_sample = pd.get_dummies(new_sample)
+    
+    # Add missing columns with a value of 0
+    missing_cols = set(feature_columns) - set(new_sample.columns)
+    for c in missing_cols:
+        new_sample[c] = 0
+    
+    # Ensure the order of columns
+    new_sample = new_sample[feature_columns]
+    return new_sample
+
+# New sample data
+new_sample_data = {
+    'Outlook': 'Overcast',
+    'Temperature': 'Hot',
+    'Humidity': 'Normal',
+    'Wind': 'Weak'
+}
+
+# Format and predict for new sample
+formatted_new_sample = format_new_sample(new_sample_data, X_train.columns)
+new_sample_prediction = clf.predict(formatted_new_sample)
+
+print("New Sample Prediction:", new_sample_prediction[0])
